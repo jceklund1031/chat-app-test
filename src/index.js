@@ -14,10 +14,6 @@ const port = process.env.PORT || 3000
 const publicDirectoryPath = path.join(__dirname, '../public')
 
 app.use(express.static(publicDirectoryPath))
-let count = 0
-
-// server (emit) -> client (recieve) - countUpdated
-// client (emit) -> server (recieve) - increment
 
 io.on('connection', (socket) => {
     console.log('New Websocket connection')
@@ -31,8 +27,9 @@ io.on('connection', (socket) => {
             return callback(error)
         }
         socket.join(user.room)
+
         socket.emit('message', generateMessage('Admin','Welcome'))
-        socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined`))
+        socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `${user.username} has joined`))
         io.to(user.room).emit('roomData', {
             room: user.room,
             users: getUserInRoom(user.room)
